@@ -10,4 +10,6 @@
 - 🌐 Красивый веб-интерфейс 
 
 # 🔹 Запуск локально 
-- uvicorn app.main:app --reload --port 8001# LeshenkoAMKR
+- uvicorn app.main:app --reload --port 8001 
+
+# LeshenkoAMKR

@@ -7,11 +7,11 @@ from .. import database, auth, crud, schemas
 from sqlalchemy import select
 from pathlib import Path
 
+# Путь к корню проекта
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-router = APIRouter(prefix="/web", tags=["🌐 Веб Интерфейс"])
-
+router = APIRouter()
 
 @router.get(
     "/",
@@ -25,12 +25,8 @@ router = APIRouter(prefix="/web", tags=["🌐 Веб Интерфейс"])
     Это корневой маршрут веб-интерфейса.
     """
 )
-async def web_home(request: Request, db: AsyncSession = Depends(database.get_db)):
-    user = await auth.get_current_user_web(request, db)
-    if user:
-        return RedirectResponse("/web/books", status_code=303)
-    else:
-        return RedirectResponse("/web/login", status_code=303)
+async def web_home(request: Request):
+    return RedirectResponse("/web/login", status_code=303)
 
 @router.get(
     "/login",
@@ -66,7 +62,6 @@ async def login_page(request: Request):
 )
 async def login_web(
     request: Request,
-    response: Response,
     username: str = Form(...),
     password: str = Form(...),
     db: AsyncSession = Depends(database.get_db)
@@ -79,8 +74,11 @@ async def login_web(
             status_code=401
         )
     token = auth.create_access_token(data={"sub": user.username})
-    auth.set_auth_cookie(response, token)
-    return RedirectResponse("/web/books", status_code=303)
+    
+    # УСТАНАВЛИВАЕМ КУКУ В САМ RedirectResponse!
+    redirect_response = RedirectResponse("/web/books", status_code=303)
+    auth.set_auth_cookie(redirect_response, token)
+    return redirect_response
 
 @router.get(
     "/register",
@@ -125,12 +123,11 @@ async def register_page(request: Request):
 )
 async def register_web(
     request: Request,
-    response: Response,
     username: str = Form(...),
     password: str = Form(...),
     db: AsyncSession = Depends(database.get_db)
 ):
-    # Валидация длины пароля (защита от 72+ байт)
+    # Валидация
     if len(password.encode('utf-8')) > 72:
         return templates.TemplateResponse(
             "register.html",
@@ -144,7 +141,7 @@ async def register_web(
             status_code=400
         )
 
-    # Проверка существования пользователя
+    # Проверка существования
     existing = await db.execute(select(auth.models.User).where(auth.models.User.username == username))
     if existing.scalar_one_or_none():
         return templates.TemplateResponse(
@@ -153,14 +150,19 @@ async def register_web(
             status_code=400
         )
 
-    # Хешируем и сохраняем
+    # Создание пользователя
     hashed_pw = auth.hash_password(password)
     db_user = auth.models.User(username=username, hashed_password=hashed_pw)
     db.add(db_user)
     await db.commit()
+    
+    # Установка куки и редирект
     token = auth.create_access_token(data={"sub": username})
-    auth.set_auth_cookie(response, token)
-    return RedirectResponse("/web/books", status_code=303)
+    
+    # УСТАНАВЛИВАЕМ КУКУ В САМ RedirectResponse!
+    redirect_response = RedirectResponse("/web/books", status_code=303)
+    auth.set_auth_cookie(redirect_response, token)
+    return redirect_response
 
 @router.get(
     "/books",
@@ -334,6 +336,6 @@ async def delete_book_web(
     """
 )
 async def logout(response: Response):
-    response = RedirectResponse("/", status_code=303)
+    response = RedirectResponse("/web/login", status_code=303)
     response.delete_cookie("library_token")
     return response

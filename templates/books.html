@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Моя Библиотека{% endblock %}
+{% block content %}
+<nav>
+    <h2>Моя коллекция книг</h2>
+    <a href="/web/books/new" class="btn">+ Добавить книгу</a>
+</nav>
+
+<form method="get" style="margin-bottom: 20px;">
+    <div class="form-group">
+        <input type="text" name="q" placeholder="Поиск по названию или автору..." value="{{ search_query or '' }}">
+        <button type="submit" class="btn" style="margin-top: 10px;">Найти</button>
+        {% if search_query %}
+            <a href="/web/books" style="margin-left: 10px;">← Очистить</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if books %}
+    {% for book in books %}
+    <div class="book-card">
+        <h3>{{ book.title }}</h3>
+        <p><strong>Автор:</strong> {{ book.author }}</p>
+        <form method="post" action="/web/books/{{ book.id }}/delete" style="display:inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить эту книгу?')">Удалить</button>
+        </form>
+        <a href="/web/books/{{ book.id }}/edit" class="btn" style="margin-left: 10px;">Изменить</a>
+    </div>
+    {% endfor %}
+{% else %}
+    <p style="text-align: center; color: #7f8c8d;">Книг пока нет. <a href="/web/books/new">Добавьте первую книгу!</a></p>
+{% endif %}
+
+<a href="/web/logout" style="display: block; margin-top: 30px; color: #e74c3c;">Выйти из аккаунта</a>
+{% endblock %}

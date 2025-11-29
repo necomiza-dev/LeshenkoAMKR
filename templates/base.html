@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Домашняя Библиотека{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Моя Домашняя Библиотека</h1>
+        </header>
+
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+        <footer style="margin-top: 40px; text-align: center; color: #7f8c8d; font-size: 0.9em;">
+            © 2025 Домашняя Библиотека
+        </footer>
+    </div>
+</body>
+</html>

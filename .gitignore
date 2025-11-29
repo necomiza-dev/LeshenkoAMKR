@@ -1,0 +1,41 @@
+# Виртуальное окружение
+.env/
+venv/
+env/
+
+# База данных SQLite
+library.db
+*.db
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.pyc.*
+coverage.xml
+.coverage
+.pytest_cache/
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Локальные переменные окружения (если используете)
+.env
+.env.local
+
+# Логи и временные файлы
+*.log
+*.tmp
+logs/
+
+# Python packaging
+build/
+dist/
+*.egg-info/

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Редактировать Книгу{% endblock %}
+{% block content %}
+<h2>Редактировать книгу</h2>
+<form method="post" action="/web/books/{{ book.id }}/update">
+    <div class="form-group">
+        <label for="title">Название</label>
+        <input type="text" id="title" name="title" value="{{ book.title }}" required maxlength="200">
+    </div>
+    <div class="form-group">
+        <label for="author">Автор</label>
+        <input type="text" id="author" name="author" value="{{ book.author }}" required maxlength="100">
+    </div>
+    <button type="submit" class="btn">Сохранить изменения</button>
+</form>
+<a href="/web/books">← Назад</a>
+{% endblock %}

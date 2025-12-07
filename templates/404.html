@@ -1,0 +1,14 @@
+<!-- templates/404.html -->
+{% extends "base.html" %}
+{% block title %}Ошибка 404 — Страница не найдена{% endblock %}
+{% block content %}
+<div style="text-align: center; padding: 40px 20px; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #f87171; font-size: 48px; margin-bottom: 20px;">404</h2>
+    <p style="font-size: 18px; color: #cbd5e1; margin-bottom: 24px;">
+        К сожалению, страница, которую вы ищете, не существует.
+    </p>
+    <a href="/" class="btn" style="background: linear-gradient(135deg, #4a6cf7, #3a56c4); color: white; text-decoration: none;">
+        Вернуться на главную
+    </a>
+</div>
+{% endblock %}

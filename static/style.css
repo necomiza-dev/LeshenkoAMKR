@@ -1,4 +1,4 @@
-/* Тёплая тёмная тема: мягкая, читаемая, уютная */
+
 * {
 	margin: 0;
 	padding: 0;
@@ -8,9 +8,7 @@
 
 body {
 	background: #121212;
-	/* глубокий тёмно-серый (не чёрный!) */
-	color: #e0e0e0;
-	/* мягкий белый */
+	color: #e0e0e0 ;
 	line-height: 1.6;
 }
 
@@ -54,8 +52,7 @@ nav {
 
 nav a {
 	text-decoration: none;
-	color: #64b5f6;
-	/* мягкий голубой акцент */
+	color:  #4C9141;
 	font-weight: 600;
 	padding: 8px 16px;
 	border-radius: 6px;
@@ -94,13 +91,12 @@ nav a:hover {
 
 .form-group input:focus {
 	outline: none;
-	border-color: #64b5f6;
+	border-color:  #316650,;
 	box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.25);
 }
 
 .btn {
-	background: linear-gradient(135deg, #4a6cf7, #3a56c4);
-	/* мягкий сине-фиолетовый градиент */
+	background: linear-gradient(135deg, #316650, #1C542D);
 	color: white;
 	border: none;
 	padding: 12px 24px;
@@ -109,14 +105,14 @@ nav a:hover {
 	font-size: 16px;
 	font-weight: 600;
 	transition: all 0.25s ease;
-	box-shadow: 0 4px 12px rgba(74, 108, 247, 0.25);
+	box-shadow: 0 4px 12px #013220;
 	letter-spacing: 0.2px;
 }
 
 .btn:hover {
-	background: linear-gradient(135deg, #3a56c4, #2d44a0);
+	background: linear-gradient(135deg, #1C542D, #316650);
 	transform: translateY(-2px);
-	box-shadow: 0 6px 16px rgba(74, 108, 247, 0.35);
+	box-shadow: 0 6px 16px #013220;
 }
 
 .btn-danger {
@@ -135,7 +131,7 @@ nav a:hover {
 	margin-bottom: 20px;
 	border-radius: 12px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-	border-left: 4px solid #4a6cf7;
+	border-left: 4px solid #316650;
 	transition: transform 0.2s, box-shadow 0.2s;
 }
 

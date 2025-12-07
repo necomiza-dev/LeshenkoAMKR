@@ -1,7 +1,8 @@
-# app/main.py
-from fastapi import FastAPI, Request, Depends
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, Request, Depends, Response
+from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from pathlib import Path
 from .database import Base, engine
 from .web import routes as web_routes
@@ -37,3 +38,23 @@ async def root_redirect(request: Request, db: AsyncSession = Depends(get_db)):
         return RedirectResponse("/web/books", status_code=303)
     else:
         return RedirectResponse("/web/login", status_code=303)
+
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 404:
+        if request.url.path.startswith("/api"):
+            return JSONResponse(
+                status_code=404,
+                content={"detail": "API endpoint not found"}
+            )
+        else:
+            templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templates"))
+            return templates.TemplateResponse(
+                "404.html",
+                {"request": request},
+                status_code=404
+            )
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": str(exc.detail)}
+    )

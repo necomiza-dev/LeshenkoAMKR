@@ -6,7 +6,12 @@ from .schemas import BookCreate, BookUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 async def create_book(db: AsyncSession, book: BookCreate, owner_id: int):
-    db_book = models.Book(**book.model_dump(), owner_id=owner_id)
+    db_book = models.Book(
+        title=book.title,
+        author=book.author,
+        description=book.description if book.description is not None else "",
+        owner_id=owner_id
+    )
     db.add(db_book)
     await db.commit()
     await db.refresh(db_book)

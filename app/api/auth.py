@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
-from sqlalchemy import select   # <- добавлено
+from sqlalchemy import select  
 from .. import schemas, database, auth
 from ..models import User
 from ..auth import create_access_token

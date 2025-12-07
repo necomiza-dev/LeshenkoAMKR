@@ -1,6 +1,6 @@
 # app/web/routes.py
 from fastapi import APIRouter, Request, Form, HTTPException, Depends, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from .. import database, auth, crud, schemas
@@ -75,7 +75,6 @@ async def login_web(
         )
     token = auth.create_access_token(data={"sub": user.username})
     
-    # УСТАНАВЛИВАЕМ КУКУ В САМ RedirectResponse!
     redirect_response = RedirectResponse("/web/books", status_code=303)
     auth.set_auth_cookie(redirect_response, token)
     return redirect_response
@@ -159,7 +158,6 @@ async def register_web(
     # Установка куки и редирект
     token = auth.create_access_token(data={"sub": username})
     
-    # УСТАНАВЛИВАЕМ КУКУ В САМ RedirectResponse!
     redirect_response = RedirectResponse("/web/books", status_code=303)
     auth.set_auth_cookie(redirect_response, token)
     return redirect_response
@@ -236,12 +234,14 @@ async def create_book_web(
     request: Request,
     title: str = Form(...),
     author: str = Form(...),
+    description: str = Form(...), 
     db: AsyncSession = Depends(database.get_db)
 ):
     user = await auth.get_current_user_web(request, db)
     if not user:
         return RedirectResponse("/web/login", status_code=303)
-    book_in = schemas.BookCreate(title=title, author=author)
+    # ПЕРЕДАЁМ description!
+    book_in = schemas.BookCreate(title=title, author=author, description=description)
     await crud.create_book(db, book_in, user.id)
     return RedirectResponse("/web/books", status_code=303)
 
@@ -290,13 +290,14 @@ async def update_book_web(
     book_id: int,
     title: str = Form(...),
     author: str = Form(...),
+    description: str = Form(...),
     request: Request = None,
     db: AsyncSession = Depends(database.get_db)
 ):
     user = await auth.get_current_user_web(request, db)
     if not user:
         return RedirectResponse("/web/login", status_code=303)
-    book_update = schemas.BookUpdate(title=title, author=author)
+    book_update = schemas.BookUpdate(title=title, author=author, description=description)
     updated = await crud.update_book(db, book_id, book_update, user.id)
     if not updated:
         raise HTTPException(status_code=404, detail="Книга не найдена")
@@ -339,3 +340,36 @@ async def logout(response: Response):
     response = RedirectResponse("/web/login", status_code=303)
     response.delete_cookie("library_token")
     return response
+
+
+@router.get("/books/json", response_class=JSONResponse)
+async def books_json(
+    request: Request,
+    db: AsyncSession = Depends(database.get_db)
+):
+    """
+    Возвращает все книги текущего пользователя в формате JSON.
+    
+    Использует сессионную авторизацию (куки), как в веб-интерфейсе.
+    """
+    user = await auth.get_current_user_web(request, db)
+    if not user:
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "Требуется авторизация"}
+        )
+    
+    books = await crud.get_books(db, user.id)
+    
+    # Преобразуем книги в словари
+    books_data = [
+        {
+            "id": book.id,
+            "title": book.title,
+            "author": book.author,
+            "owner_id": book.owner_id
+        }
+        for book in books
+    ]
+    
+    return JSONResponse(content={"books": books_data})

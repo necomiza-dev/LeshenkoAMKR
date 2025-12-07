@@ -46,7 +46,7 @@ def set_auth_cookie(response: Response, token: str):
         secure=False,
         samesite="lax",
         max_age=1800,
-        path="/"  # ← ПУТЬ ДЛЯ ВСЕХ МАРШРУТОВ
+        path="/"  
     )
 
 def get_token_from_cookie(request: Request) -> str | None:

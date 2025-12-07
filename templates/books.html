@@ -21,6 +21,9 @@
     <div class="book-card">
         <h3>{{ book.title }}</h3>
         <p><strong>Автор:</strong> {{ book.author }}</p>
+        {% if book.description and book.description.strip() %}
+            <p><strong>Описание:</strong> {{ book.description }}</p>
+        {% endif %}
         <form method="post" action="/web/books/{{ book.id }}/delete" style="display:inline;">
             <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить эту книгу?')">Удалить</button>
         </form>
